@@ -3,23 +3,31 @@ defmodule Dicex do
   Documentation for `Dicex`.
   """
 
-  def roll(sides) do
-    result = :rand.uniform(sides)
-    IO.inspect("Rolled d#{sides}: #{result}")
-    result
-  end
+  require Logger
 
-  def roll(sides, times) do
-    1..times
-    |> Enum.map(fn _ -> roll(sides) end)
-    |> Enum.sum()
-  end
-
-  def run(string) do
+  @spec roll(String.t()) :: {[{integer(), integer()}], integer()} | {:error, any()}
+  def roll(string) when is_binary(string) do
     string
     |> String.to_charlist()
     |> :tokens.string()
     |> elem(1)
     |> :grammar.parse()
+    |> elem(1)
+  rescue
+    error -> {:error, error}
+  end
+
+  def roll(sides) when is_integer(sides) do
+    :rand.uniform(sides)
+  end
+
+  def roll(sides, times) do
+    {_rolls, total} = roll_detail(sides, times)
+    total
+  end
+
+  def roll_detail(sides, times) do
+    rolls = Enum.map(1..times, fn _ -> {sides, roll(sides)} end)
+    {rolls, Enum.reduce(rolls, 0, fn {_, result}, acc -> acc + result end)}
   end
 end
