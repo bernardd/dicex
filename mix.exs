@@ -8,14 +8,17 @@ defmodule Dicex.MixProject do
       elixir: "~> 1.16",
       compilers: [:leex, :yecc] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+
+      name: "Dicex",
+      description: "A dice roller supporting common dice notation.",
+      source_url: "https://github.com/bernardd/dicex"
     ]
   end
 
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
     ]
   end
 
