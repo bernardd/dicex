@@ -3,16 +3,6 @@ defmodule Dicex do
   Documentation for `Dicex`.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Dicex.hello()
-      :world
-
-  """
-
   def roll(sides) do
     result = :rand.uniform(sides)
     IO.inspect("Rolled d#{sides}: #{result}")
@@ -30,8 +20,6 @@ defmodule Dicex do
     |> String.to_charlist()
     |> :tokens.string()
     |> elem(1)
-    |> IO.inspect()
     |> :grammar.parse()
-    |> IO.inspect()
   end
 end
