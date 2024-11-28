@@ -5,14 +5,13 @@ defmodule Dicex do
 
   require Logger
 
-  @spec roll(String.t()) :: {[{integer(), integer()}], integer()} | {:error, any()}
+  @spec roll(String.t()) :: {:ok, {[{integer(), integer()}], integer()}} | {:error, any()}
   def roll(string) when is_binary(string) do
     string
     |> String.to_charlist()
     |> :tokens.string()
     |> elem(1)
     |> :grammar.parse()
-    |> elem(1)
   rescue
     error -> {:error, error}
   end

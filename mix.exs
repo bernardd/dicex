@@ -5,7 +5,7 @@ defmodule Dicex.MixProject do
   def project do
     [
       app: :dicex,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.16",
       compilers: [:leex, :yecc] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -19,7 +19,8 @@ defmodule Dicex.MixProject do
 
   defp deps do
     [
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
     ]
   end
 
