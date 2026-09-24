@@ -25,7 +25,7 @@ defmodule Dicex do
       {:error, _}
 
   """
-  @spec roll(String.t()) :: {:ok, {roll_list(), roll_sum()}} | {:error, any()}
+  @spec roll(String.t()) :: {:ok, roll_list()} | {:error, any()}
   def roll(string) when is_binary(string) do
     string
     |> String.to_charlist()
@@ -58,11 +58,11 @@ defmodule Dicex do
   end
 
   def roll_detail(sides, times) do
-    1..times |> Enum.map(fn _ -> {sides, roll_die(sides)} end) |> collate_output()
+    1..times//1 |> Enum.map(fn _ -> {sides, roll_die(sides)} end) |> collate_output()
   end
 
   def roll_explode_detail(sides, times) do
-    1..times
+    1..times//1
     |> Enum.map(fn _ -> do_explode_roll(sides, []) end)
     |> List.flatten()
     |> collate_output()

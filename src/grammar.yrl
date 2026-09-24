@@ -6,7 +6,7 @@ rolls -> roll ',' rolls : ['$1' | '$3'].
 rolls -> roll : ['$1'].
 
 roll -> dice : '$1'.
-roll -> integer : value('$1').
+roll -> integer : {[], value('$1')}.
 roll -> roll '+' roll : combine_rolls('$1', '$3', fun(A, B) -> A + B end).
 roll -> roll '-' roll : combine_rolls('$1', '$3', fun(A, B) -> A - B end).
 roll -> roll '*' roll : combine_rolls('$1', '$3', fun(A, B) -> A * B end).
@@ -18,10 +18,8 @@ dice -> d integer '!' : 'Elixir.Dicex':roll_explode_detail(value('$2'), 1).
 dice -> d integer : 'Elixir.Dicex':roll_detail(value('$2'), 1).
 
 Left 50 ','.
-Left 100 '+'.
-Left 200 '-'.
-Left 300 '*'.
-Left 400 '/'.
+Left 100 '+' '-'.
+Left 200 '*' '/'.
 
 Erlang code.
 
@@ -30,10 +28,6 @@ combine_rolls(Rolls1, Rolls2, Operator) ->
 
 value({integer, _TokenLine, Value}) -> Value.
 
-add_rolls(Left, Right) -> rolls(Left) ++ rolls(Right).
+add_rolls({Left, _}, {Right, _}) -> Left ++ Right.
 
-rolls({Rolls, _Total}) -> Rolls;
-rolls(_) -> [].
-
-total({_Rolls, Total}) -> Total;
-total(Value) -> Value.
+total({_Rolls, Total}) -> Total.
