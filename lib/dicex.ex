@@ -25,8 +25,25 @@ defmodule Dicex do
     total
   end
 
+  def explode_roll(sides) do
+    {:explode, sides, do_explode_roll(sides, [])}
+  end
+
+  defp do_explode_roll(sides, acc) do
+    result = roll(sides)
+    if result == sides do
+      do_explode_roll(sides, [result | acc])
+    else
+      Enum.reverse([result | acc])
+    end
+  end
+
   def roll_detail(sides, times) do
-    rolls = Enum.map(1..times, fn _ -> {sides, roll(sides)} end)
-    {rolls, Enum.reduce(rolls, 0, fn {_, result}, acc -> acc + result end)}
+    rolls = Enum.map(1..times, fn _ -> {:roll, sides, roll(sides)} end)
+    {rolls, Enum.reduce(rolls, 0, fn {_, _, result}, acc -> acc + result end)}
+  end
+
+  def roll_explode_detail(sides, times) do
+    rolls = Enum.map(1..times, fn -> explode_roll(sides) end)
   end
 end
