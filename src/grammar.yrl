@@ -1,8 +1,10 @@
-Nonterminals roll group dice.
-Terminals integer d '+' '-' '*' '/' '(' ')' '&' '!'.
-Rootsymbol roll.
+Nonterminals rolls roll dice.
+Terminals integer d '+' '-' '*' '/' '!' ','.
+Rootsymbol rolls.
 
-roll -> group : '$1'.
+rolls -> roll ',' rolls : ['$1' | '$3'].
+rolls -> roll : ['$1'].
+
 roll -> dice : '$1'.
 roll -> integer : value('$1').
 roll -> roll '+' roll : combine_rolls('$1', '$3', fun(A, B) -> A + B end).
@@ -15,8 +17,7 @@ dice -> integer d integer : 'Elixir.Dicex':roll_detail(value('$3'), value('$1'))
 dice -> d integer '!' : 'Elixir.Dicex':roll_explode_detail(value('$2'), 1).
 dice -> d integer : 'Elixir.Dicex':roll_detail(value('$2'), 1).
 
-group -> '(' roll ')' : '$2'.
-
+Left 50 ','.
 Left 100 '+'.
 Left 200 '-'.
 Left 300 '*'.

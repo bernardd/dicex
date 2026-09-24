@@ -9,10 +9,8 @@ Rules.
 \- : {token, {'-', TokenLine}}.
 [\*x] : {token, {'*', TokenLine}}.
 \/ : {token, {'/', TokenLine}}.
-\( : {token, {'(', TokenLine}}.
-\) : {token, {')', TokenLine}}.
-& : {token, {'&', TokenLine}}.
 ! : {token, {'!', TokenLine}}.
+, : {token, {',', TokenLine}}.
 [\s\t\n] : skip_token.
 
 Erlang code.

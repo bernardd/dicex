@@ -3,9 +3,29 @@ defmodule Dicex do
   Documentation for `Dicex`.
   """
 
-  require Logger
+  @type dice :: integer()
+  @type rolled_value :: integer()
+  @type roll :: {dice(), rolled_value()}
+  @type roll_sum :: integer()
+  @type roll_result :: {[roll()], roll_sum()}
+  @type roll_list :: [roll_result()]
 
-  @spec roll(String.t()) :: {:ok, {[{integer(), integer()}], integer()}} | {:error, any()}
+  @doc """
+  Returns a list of rolls and the total of the rolls.
+
+  ## Examples
+
+      iex> Dicex.roll("2d6")
+      {:ok, [{[{6, 3}, {6, 5}], 8}]}
+
+      iex> Dicex.roll("1d4, 2d6")
+      {:ok, [{[{4, 2}], 2}, {[{6, 3}, {6, 2}], 6}]}
+
+      iex> Dicex.roll("invalid input")
+      {:error, _}
+
+  """
+  @spec roll(String.t()) :: {:ok, {roll_list(), roll_sum()}} | {:error, any()}
   def roll(string) when is_binary(string) do
     string
     |> String.to_charlist()
@@ -16,34 +36,39 @@ defmodule Dicex do
     error -> {:error, error}
   end
 
-  def roll(sides) when is_integer(sides) do
+  # Simple roll of a die with a given number of sides.
+  @spec roll_die(integer()) :: integer()
+  defp roll_die(sides) do
     :rand.uniform(sides)
   end
 
-  def roll(sides, times) do
-    {_rolls, total} = roll_detail(sides, times)
-    total
-  end
-
-  def explode_roll(sides) do
-    {:explode, sides, do_explode_roll(sides, [])}
+  defp do_explode_roll(_sides, acc) when length(acc) == 50 do
+    Enum.reverse(acc)
   end
 
   defp do_explode_roll(sides, acc) do
-    result = roll(sides)
-    if result == sides do
-      do_explode_roll(sides, [result | acc])
+    this_roll = roll_die(sides)
+    roll_list = [{sides, this_roll} | acc]
+
+    if this_roll == sides do
+      do_explode_roll(sides, roll_list)
     else
-      Enum.reverse([result | acc])
+      Enum.reverse(roll_list)
     end
   end
 
   def roll_detail(sides, times) do
-    rolls = Enum.map(1..times, fn _ -> {:roll, sides, roll(sides)} end)
-    {rolls, Enum.reduce(rolls, 0, fn {_, _, result}, acc -> acc + result end)}
+    1..times |> Enum.map(fn _ -> {sides, roll_die(sides)} end) |> collate_output()
   end
 
   def roll_explode_detail(sides, times) do
-    rolls = Enum.map(1..times, fn -> explode_roll(sides) end)
+    1..times
+    |> Enum.map(fn _ -> do_explode_roll(sides, []) end)
+    |> List.flatten()
+    |> collate_output()
+  end
+
+  defp collate_output(rolls) do
+    {rolls, Enum.reduce(rolls, 0, fn {_, result}, acc -> acc + result end)}
   end
 end
